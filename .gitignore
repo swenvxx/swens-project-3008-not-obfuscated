@@ -1,41 +1,144 @@
-# Compiled Lua sources
-luac.out
 
-# luarocks build files
-*.src.rock
-*.zip
-*.tar.gz
+--[[
 
-# Object files
-*.o
-*.os
-*.ko
-*.obj
-*.elf
+░██████╗░██╗░░░░░░░██╗███████╗███╗░░██╗░██████╗
+██╔════╝░██║░░██╗░░██║██╔════╝████╗░██║██╔════╝
+╚█████╗░░╚██╗████╗██╔╝█████╗░░██╔██╗██║╚█████╗░
+░╚═══██╗░░████╔═████║░██╔══╝░░██║╚████║░╚═══██╗
+██████╔╝░░╚██╔╝░╚██╔╝░███████╗██║░╚███║██████╔╝
+╚═════╝░░░░╚═╝░░░╚═╝░░╚══════╝╚═╝░░╚══╝╚═════╝░
 
-# Precompiled Headers
-*.gch
-*.pch
+██████╗░██████╗░░█████╗░░░░░░██╗███████╗░█████╗░████████╗
+██╔══██╗██╔══██╗██╔══██╗░░░░░██║██╔════╝██╔══██╗╚══██╔══╝
+██████╔╝██████╔╝██║░░██║░░░░░██║█████╗░░██║░░╚═╝░░░██║░░░
+██╔═══╝░██╔══██╗██║░░██║██╗░░██║██╔══╝░░██║░░██╗░░░██║░░░
+██║░░░░░██║░░██║╚█████╔╝╚█████╔╝███████╗╚█████╔╝░░░██║░░░
+╚═╝░░░░░╚═╝░░╚═╝░╚════╝░░╚════╝░╚══════╝░╚════╝░░░░╚═╝░░░
 
-# Libraries
-*.lib
-*.a
-*.la
-*.lo
-*.def
-*.exp
+]]
+if game.PlaceId == 2768379856 then
+local plr = game.Players.LocalPlayer
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/bloodball/-back-ups-for-libs/main/cat"))()
+local Window = Library:CreateWindow("swens Project | 3008 [2.71] | RightControl Hide UI", Vector2.new(492, 598), Enum.KeyCode.RightControl)
+local Main = Window:CreateTab("Main")
+local MainS = Main:CreateSector("--// LocalPlayer //--", "left")
 
-# Shared objects (inc. Windows DLLs)
-*.dll
-*.so
-*.so.*
-*.dylib
+local CurrentClock = game.Lighting.ClockTime
+local CurrecntFogEnd = game.Lighting.FogEnd
 
-# Executables
-*.exe
-*.out
-*.app
-*.i*86
-*.x86_64
-*.hex
+getgenv().ThirdCamera = false
+getgenv().CustomKickReasson = ""
+getgenv().GetWalkSpeed = 456
+getgenv().GetJumpPower = 475
+getgenv().GetFallDamage = true
+getgenv().NightVision = true
+getgenv().NightVisionHolder = true
+getgenv().NightVisionSaveFog = 30
+getgenv().NightVisionSaveClock = 12
+getgenv().IskarnaESP = true
 
+local ThirdMode = MainS:AddToggle("Third Camera", false, function(e)
+    getgenv().ThirdCamera = e
+    if getgenv().ThirdCamera == true then
+        plr.CameraMaxZoomDistance = 3000
+        plr.CameraMode = "Classic"
+    elseif getgenv().ThirdCamera == false then
+        plr.CameraMaxZoomDistance = 0.5
+        plr.CameraMode = "LockFirstPerson"
+    end
+end)
+
+local FallDamage = MainS:AddToggle("Fall-Damage", false, function(e)
+    plr.Character.FallDamage.Disabled = e
+    getgenv().GetFallDamage = e
+end)
+
+MainS:AddSlider("WalkSpeed", 16, 16, 2000, 1, function(State)
+    plr.Character.Humanoid.WalkSpeed = State
+    getgenv().GetWalkSpeed = State
+end)
+
+MainS:AddSlider("JumpPower", 32, 32, 2000, 1, function(State)
+    plr.Character.Humanoid.JumpPower = State
+    getgenv().GetJumpPower = State
+end)
+
+local Troll = Main:CreateSector("--// Troll //--", "right")
+Troll:AddTextbox("Type Here Fake Kick Reasson", nil, function(State)
+getgenv().CustomKickReasson = State
+end)
+
+Troll:AddButton("Fake Kick", function(IhateGayPeople)
+    plr:Kick(getgenv().CustomKickReasson)
+end)
+
+Troll:AddButton("Fake Ban (No Custom)", function(IhateGayPeople)
+    plr:Kick("You've been banned from the game for using an hacking programms. You cannot appeal this ban on our discord server")
+end)
+
+local Visual = Window:CreateTab("Visual")
+local VisualS = Visual:CreateSector("--// Lighting //--", "left")
+local ESPVISUAL = Visual:CreateSector("--// ESP //--", "right")
+
+local NightVisions = VisualS:AddToggle("Night Vision, FullBright", false, function(e)
+    getgenv().NightVisionHolder = e
+    if getgenv().NightVisionHolder == true then
+        game.Lighting.ClockTime = 12
+        game.Lighting.FogEnd = 30000
+        getgenv().NightVisionSave = 12
+        getgenv().NightVisionSaveFog = 30
+    end
+end)
+
+NightVisions:AddKeybind()
+
+local Settings = Window:CreateTab("Settings")
+Settings:CreateConfigSystem("left")
+
+FallDamage:AddKeybind()
+ThirdMode:AddKeybind()
+
+local function WalkSpeedDeath()
+    local CHR = game.Players.LocalPlayer.Character.Humanoid
+
+    if CHR then
+        if CHR.WalkSpeed < getgenv().GetWalkSpeed then
+            plr.Character.Humanoid.WalkSpeed = getgenv().GetWalkSpeed
+        end
+    else
+        print("No Death")
+    end
+end
+
+local function JumpPowerDeath()
+    local CHR = game.Players.LocalPlayer.Character.Humanoid
+
+    if CHR then
+        if CHR.JumpPower < getgenv().GetJumpPower then
+            CHR.JumpPower = getgenv().GetJumpPower
+        end
+    else
+        print("No Death")
+    end
+end
+
+local function DetectFallDamageDeath()
+    local CHR = game.Players.LocalPlayer.Character
+
+    if CHR then
+        CHR:WaitForChild("FallDamage").Disabled = getgenv().GetFallDamage
+    end
+end
+
+while true do
+    wait(0.1)
+    WalkSpeedDeath()
+    JumpPowerDeath()
+    DetectFallDamageDeath()
+end
+
+getgenv().ItemEsv = false
+
+else
+    plr:Kick("ErRor 467 | Game Aint Supported")
+end
